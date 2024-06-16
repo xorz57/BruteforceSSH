@@ -79,31 +79,8 @@ void SSHConnectPasswords(const std::string &filename, const std::string &hostnam
     }
 }
 
-void SSHConnectHosts(const std::string &filename, const std::string &username, const std::string &password) {
-    std::ifstream file(filename);
-    std::string line;
-
-    if (!file.is_open()) {
-        std::cerr << "Failed to open hosts file: " << filename << std::endl;
-        return;
-    }
-
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        std::string hostname;
-        std::string port;
-
-        if (std::getline(iss, hostname, ':') && std::getline(iss, port)) {
-            if (SSHConnect(hostname, std::stoi(port), username, password)) {
-                break;
-            }
-        }
-    }
-}
-
 int main() {
-    SSHConnectHosts("assets/hosts.txt", "pi", "raspberry");
-    // SSHConnectAccounts("assets/accounts.txt", "127.0.0.1", 2222);
+    SSHConnectAccounts("assets/accounts.txt", "127.0.0.1", 2222);
     // SSHConnectPasswords("assets/passwords.txt", "127.0.0.1", "pi", 2222);
     return 0;
 }
