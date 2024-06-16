@@ -36,13 +36,13 @@ bool SSHConnect(const std::string &hostname, int port, const std::string &userna
     }
 }
 
-void SSHConnectAccounts(const std::string &filename, const std::string &hostname, int port) {
+bool SSHConnectAccounts(const std::string &filename, const std::string &hostname, int port) {
     std::ifstream file(filename);
     std::string line;
 
     if (!file.is_open()) {
         std::cerr << "Failed to open accounts file: " << filename << std::endl;
-        return;
+        return false;
     }
 
     while (std::getline(file, line)) {
@@ -52,19 +52,20 @@ void SSHConnectAccounts(const std::string &filename, const std::string &hostname
 
         if (std::getline(iss, username, ':') && std::getline(iss, password)) {
             if (SSHConnect(hostname, port, username, password)) {
-                break;
+                return true;
             }
         }
     }
+    return false;
 }
 
-void SSHConnectPasswords(const std::string &filename, const std::string &hostname, const std::string &username, int port) {
+bool SSHConnectPasswords(const std::string &filename, const std::string &hostname, const std::string &username, int port) {
     std::ifstream file(filename);
     std::string line;
 
     if (!file.is_open()) {
         std::cerr << "Failed to open passwords file: " << filename << std::endl;
-        return;
+        return false;
     }
 
     while (std::getline(file, line)) {
@@ -73,10 +74,11 @@ void SSHConnectPasswords(const std::string &filename, const std::string &hostnam
 
         if (std::getline(iss, password)) {
             if (SSHConnect(hostname, port, username, password)) {
-                break;
+                return true;
             }
         }
     }
+    return false;
 }
 
 int main() {
