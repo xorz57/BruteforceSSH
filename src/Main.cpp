@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-bool SSHConnect(const std::string &hostname, int port, const std::string &username, const std::string &password) {
+bool SSHConnect(const std::string &hostname, int port, const std::string &username, const std::string &password, int timeout) {
     ssh_session my_ssh_session = ssh_new();
     if (my_ssh_session == nullptr)
         return false;
@@ -14,6 +14,7 @@ bool SSHConnect(const std::string &hostname, int port, const std::string &userna
     ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
     ssh_options_set(my_ssh_session, SSH_OPTIONS_USER, username.c_str());
     ssh_options_set(my_ssh_session, SSH_OPTIONS_HOSTKEYS, "ssh-ed25519");
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_TIMEOUT, &timeout);
 
     int rc = ssh_connect(my_ssh_session);
     if (rc != SSH_OK) {
@@ -36,7 +37,7 @@ bool SSHConnect(const std::string &hostname, int port, const std::string &userna
     }
 }
 
-bool SSHConnectAccounts(const std::string &filename, const std::string &hostname, int port) {
+bool SSHConnectAccounts(const std::string &filename, const std::string &hostname, int port, int timeout) {
     std::ifstream file(filename);
     std::string line;
 
@@ -51,7 +52,7 @@ bool SSHConnectAccounts(const std::string &filename, const std::string &hostname
         std::string password;
 
         if (std::getline(iss, username, ':') && std::getline(iss, password)) {
-            if (SSHConnect(hostname, port, username, password)) {
+            if (SSHConnect(hostname, port, username, password, timeout)) {
                 return true;
             }
         }
@@ -59,7 +60,7 @@ bool SSHConnectAccounts(const std::string &filename, const std::string &hostname
     return false;
 }
 
-bool SSHConnectPasswords(const std::string &filename, const std::string &hostname, const std::string &username, int port) {
+bool SSHConnectPasswords(const std::string &filename, const std::string &hostname, const std::string &username, int port, int timeout) {
     std::ifstream file(filename);
     std::string line;
 
@@ -73,7 +74,7 @@ bool SSHConnectPasswords(const std::string &filename, const std::string &hostnam
         std::string password;
 
         if (std::getline(iss, password)) {
-            if (SSHConnect(hostname, port, username, password)) {
+            if (SSHConnect(hostname, port, username, password, timeout)) {
                 return true;
             }
         }
@@ -82,7 +83,7 @@ bool SSHConnectPasswords(const std::string &filename, const std::string &hostnam
 }
 
 int main() {
-    SSHConnectAccounts("assets/accounts.txt", "127.0.0.1", 2222);
-    // SSHConnectPasswords("assets/passwords.txt", "127.0.0.1", "pi", 2222);
+    SSHConnectAccounts("assets/accounts.txt", "127.0.0.1", 2222, 30);
+    // SSHConnectPasswords("assets/passwords.txt", "127.0.0.1", "pi", 2222, 30);
     return 0;
 }
