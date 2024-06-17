@@ -1,5 +1,29 @@
 # BruteforceSSH
 
+## Testing
+
+Ensure you have Docker and Docker Compose installed on your machine.
+
+1. Clone the repository:
+
+    ```sh
+    git clone https://github.com/xorz57/BruteforceSSH.git
+    cd BruteforceSSH
+    ```
+
+2. Start the OpenSSH server using Docker Compose:
+
+    ```sh
+    docker-compose up -d
+    ```
+
+3. The OpenSSH server will be available on port `2222` of your localhost.
+
+### Credentials
+
+- **Username**: `pi`
+- **Password**: `raspberry`
+
 ## Dependencies
 
 BruteforceSSH relies on the following libraries:
