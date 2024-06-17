@@ -1,5 +1,7 @@
 # BruteforceSSH
 
+[![Build](https://github.com/xorz57/BruteforceSSH/actions/workflows/Build.yml/badge.svg)](https://github.com/xorz57/BruteforceSSH/actions/workflows/Build.yml)
+
 ## Testing
 
 Ensure you have Docker and Docker Compose installed on your machine.
