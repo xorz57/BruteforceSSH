@@ -10,11 +10,11 @@ bool SSHConnect(const std::string &hostname, int port, const std::string &userna
     if (my_ssh_session == nullptr)
         return false;
 
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_USER, username.c_str());
     ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST, hostname.c_str());
     ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_USER, username.c_str());
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOSTKEYS, "ssh-ed25519");
     ssh_options_set(my_ssh_session, SSH_OPTIONS_TIMEOUT, &timeout);
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOSTKEYS, "ssh-ed25519");
 
     int rc = ssh_connect(my_ssh_session);
     if (rc != SSH_OK) {
