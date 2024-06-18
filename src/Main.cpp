@@ -60,7 +60,7 @@ bool SSHConnectAccounts(const std::string &filename, const std::string &hostname
     return false;
 }
 
-bool SSHConnectPasswords(const std::string &filename, const std::string &hostname, const std::string &username, int port, int timeout) {
+bool SSHConnectPasswords(const std::string &filename, const std::string &username, const std::string &hostname, int port, int timeout) {
     std::ifstream file(filename);
     std::string line;
 
@@ -84,6 +84,6 @@ bool SSHConnectPasswords(const std::string &filename, const std::string &hostnam
 
 int main() {
     SSHConnectAccounts("assets/accounts.txt", "127.0.0.1", 2222, 30);
-    // SSHConnectPasswords("assets/passwords.txt", "127.0.0.1", "pi", 2222, 30);
+    // SSHConnectPasswords("assets/passwords.txt", "pi", "127.0.0.1", 2222, 30);
     return 0;
 }
