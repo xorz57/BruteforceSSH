@@ -6,33 +6,33 @@
 #include <string>
 
 bool SSHConnect(const std::string &hostname, int port, const std::string &username, const std::string &password, int timeout) {
-    ssh_session my_ssh_session = ssh_new();
-    if (my_ssh_session == nullptr)
+    ssh_session session = ssh_new();
+    if (session == nullptr)
         return false;
 
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_USER, username.c_str());
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST, hostname.c_str());
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_TIMEOUT, &timeout);
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOSTKEYS, "ssh-ed25519");
+    ssh_options_set(session, SSH_OPTIONS_USER, username.c_str());
+    ssh_options_set(session, SSH_OPTIONS_HOST, hostname.c_str());
+    ssh_options_set(session, SSH_OPTIONS_PORT, &port);
+    ssh_options_set(session, SSH_OPTIONS_TIMEOUT, &timeout);
+    ssh_options_set(session, SSH_OPTIONS_HOSTKEYS, "ssh-ed25519");
 
-    int rc = ssh_connect(my_ssh_session);
+    int rc = ssh_connect(session);
     if (rc != SSH_OK) {
-        std::cerr << "Error connecting to " << hostname << ": " << ssh_get_error(my_ssh_session) << std::endl;
-        ssh_free(my_ssh_session);
+        std::cerr << "Error connecting to " << hostname << ": " << ssh_get_error(session) << std::endl;
+        ssh_free(session);
         return false;
     }
 
-    rc = ssh_userauth_password(my_ssh_session, nullptr, password.c_str());
+    rc = ssh_userauth_password(session, nullptr, password.c_str());
     if (rc == SSH_AUTH_SUCCESS) {
         std::cout << "Success: " << username << ":" << password << std::endl;
-        ssh_disconnect(my_ssh_session);
-        ssh_free(my_ssh_session);
+        ssh_disconnect(session);
+        ssh_free(session);
         return true;
     } else {
         std::cerr << "Failure: " << username << ":" << password << std::endl;
-        ssh_disconnect(my_ssh_session);
-        ssh_free(my_ssh_session);
+        ssh_disconnect(session);
+        ssh_free(session);
         return false;
     }
 }
