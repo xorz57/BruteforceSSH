@@ -7,8 +7,10 @@
 
 bool connect(const std::string &hostname, int port, const std::string &username, const std::string &password, int timeout) {
     ssh_session session = ssh_new();
-    if (session == nullptr)
+    if (session == nullptr) {
+        std::cerr << "Error creating SSH session" << std::endl;
         return false;
+    }
 
     ssh_options_set(session, SSH_OPTIONS_USER, username.c_str());
     ssh_options_set(session, SSH_OPTIONS_HOST, hostname.c_str());
@@ -112,7 +114,10 @@ int main(int argc, char *argv[]) {
     }
 
     if (!filename.empty()) {
-        connect_all(filename, hostname, port, timeout);
+        if (!connect_all(filename, hostname, port, timeout)) {
+            std::cerr << "No successful authentication found." << std::endl;
+            return 1;
+        }
     } else {
         std::cerr << "You must specify a file." << std::endl;
         std::cout << "Use --help for usage information." << std::endl;
