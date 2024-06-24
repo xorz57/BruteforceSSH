@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-bool SSHConnect(const std::string &hostname, int port, const std::string &username, const std::string &password, int timeout) {
+bool connect(const std::string &hostname, int port, const std::string &username, const std::string &password, int timeout) {
     ssh_session session = ssh_new();
     if (session == nullptr)
         return false;
@@ -37,7 +37,7 @@ bool SSHConnect(const std::string &hostname, int port, const std::string &userna
     }
 }
 
-bool SSHConnectAccounts(const std::string &filename, const std::string &hostname, int port, int timeout) {
+bool connect_accounts(const std::string &filename, const std::string &hostname, int port, int timeout) {
     std::ifstream file(filename);
     std::string line;
 
@@ -52,7 +52,7 @@ bool SSHConnectAccounts(const std::string &filename, const std::string &hostname
         std::string password;
 
         if (std::getline(iss, username, ':') && std::getline(iss, password)) {
-            if (SSHConnect(hostname, port, username, password, timeout)) {
+            if (connect(hostname, port, username, password, timeout)) {
                 return true;
             }
         }
@@ -60,7 +60,7 @@ bool SSHConnectAccounts(const std::string &filename, const std::string &hostname
     return false;
 }
 
-bool SSHConnectPasswords(const std::string &filename, const std::string &username, const std::string &hostname, int port, int timeout) {
+bool connect_passwords(const std::string &filename, const std::string &username, const std::string &hostname, int port, int timeout) {
     std::ifstream file(filename);
     std::string line;
 
@@ -74,7 +74,7 @@ bool SSHConnectPasswords(const std::string &filename, const std::string &usernam
         std::string password;
 
         if (std::getline(iss, password)) {
-            if (SSHConnect(hostname, port, username, password, timeout)) {
+            if (connect(hostname, port, username, password, timeout)) {
                 return true;
             }
         }
@@ -152,9 +152,9 @@ int main(int argc, char *argv[]) {
     }
 
     if (!filename_accounts.empty()) {
-        SSHConnectAccounts(filename_accounts, hostname, port, timeout);
+        connect_accounts(filename_accounts, hostname, port, timeout);
     } else if (!filename_passwords.empty() && !username.empty()) {
-        SSHConnectPasswords(filename_passwords, username, hostname, port, timeout);
+        connect_passwords(filename_passwords, username, hostname, port, timeout);
     } else {
         std::cerr << "You must specify either an accounts file or a passwords file with a username." << std::endl;
         std::cout << "Use --help for usage information." << std::endl;
