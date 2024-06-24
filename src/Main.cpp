@@ -128,7 +128,7 @@ int main(int argc, char *argv[]) {
                 std::cerr << "--timeout option requires a timeout value (seconds) argument." << std::endl;
                 return 1;
             }
-        } else if (arg == "--help" || arg == "-help" || arg == "-h") {
+        } else if (arg == "--help") {
             std::cout << "Usage: BruteforceSSH [options]" << std::endl;
             std::cout << "Options:" << std::endl;
             std::cout << "  -f, --file <filename>      File" << std::endl;
