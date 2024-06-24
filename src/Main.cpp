@@ -37,12 +37,12 @@ bool connect(const std::string &hostname, int port, const std::string &username,
     }
 }
 
-bool connect_accounts(const std::string &filename, const std::string &hostname, int port, int timeout) {
+bool connect_all(const std::string &filename, const std::string &hostname, int port, int timeout) {
     std::ifstream file(filename);
     std::string line;
 
     if (!file.is_open()) {
-        std::cerr << "Failed to open accounts file: " << filename << std::endl;
+        std::cerr << "Failed to open file: " << filename << std::endl;
         return false;
     }
 
@@ -60,67 +60,29 @@ bool connect_accounts(const std::string &filename, const std::string &hostname, 
     return false;
 }
 
-bool connect_passwords(const std::string &filename, const std::string &username, const std::string &hostname, int port, int timeout) {
-    std::ifstream file(filename);
-    std::string line;
-
-    if (!file.is_open()) {
-        std::cerr << "Failed to open passwords file: " << filename << std::endl;
-        return false;
-    }
-
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        std::string password;
-
-        if (std::getline(iss, password)) {
-            if (connect(hostname, port, username, password, timeout)) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 int main(int argc, char *argv[]) {
-    std::string filename_accounts;
-    std::string filename_passwords;
-    std::string username;
-    std::string hostname = "127.0.0.1";
+    std::string filename;
+    std::string hostname = "localhost";
     int port = 22;
     int timeout = 30;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg == "-a" || arg == "--accounts") {
+        if (arg == "-f" || arg == "--file") {
             if (i + 1 < argc) {
-                filename_accounts = argv[++i];
+                filename = argv[++i];
             } else {
-                std::cerr << "--accounts option requires a filename argument." << std::endl;
+                std::cerr << "--file option requires a filename argument." << std::endl;
                 return 1;
             }
-        } else if (arg == "-p" || arg == "--passwords") {
-            if (i + 1 < argc) {
-                filename_passwords = argv[++i];
-            } else {
-                std::cerr << "--passwords option requires a filename argument." << std::endl;
-                return 1;
-            }
-        } else if (arg == "-u" || arg == "--username") {
-            if (i + 1 < argc) {
-                username = argv[++i];
-            } else {
-                std::cerr << "--username option requires a username argument." << std::endl;
-                return 1;
-            }
-        } else if (arg == "-h" || arg == "--hostname") {
+        } else if (arg == "-h" || arg == "--host") {
             if (i + 1 < argc) {
                 hostname = argv[++i];
             } else {
-                std::cerr << "--hostname option requires a hostname argument." << std::endl;
+                std::cerr << "--host option requires a hostname argument." << std::endl;
                 return 1;
             }
-        } else if (arg == "-P" || arg == "--port") {
+        } else if (arg == "-p" || arg == "--port") {
             if (i + 1 < argc) {
                 port = std::stoi(argv[++i]);
             } else {
@@ -137,13 +99,11 @@ int main(int argc, char *argv[]) {
         } else if (arg == "--help" || arg == "-help" || arg == "-h") {
             std::cout << "Usage: BruteforceSSH [options]" << std::endl;
             std::cout << "Options:" << std::endl;
-            std::cout << "  -a, --accounts <filename>  Accounts file" << std::endl;
-            std::cout << "  -p, --passwords <filename> Passwords file" << std::endl;
-            std::cout << "  -u, --username <username>   Username" << std::endl;
-            std::cout << "  -h, --hostname <hostname>   Hostname (default: 127.0.0.1)" << std::endl;
-            std::cout << "  -P, --port <port>           Port (default: 22)" << std::endl;
-            std::cout << "  -t, --timeout <timeout>     Timeout (seconds, default: 30)" << std::endl;
-            std::cout << "  --help                      Print help" << std::endl;
+            std::cout << "  -f, --file <filename>      File" << std::endl;
+            std::cout << "  -h, --host <hostname>      Host (default: 127.0.0.1)" << std::endl;
+            std::cout << "  -p, --port <port>          Port (default: 22)" << std::endl;
+            std::cout << "  -t, --timeout <timeout>    Timeout (seconds, default: 30)" << std::endl;
+            std::cout << "  --help                     Print help" << std::endl;
             return 0;
         } else {
             std::cerr << "Unknown option: " << arg << std::endl;
@@ -151,12 +111,10 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (!filename_accounts.empty()) {
-        connect_accounts(filename_accounts, hostname, port, timeout);
-    } else if (!filename_passwords.empty() && !username.empty()) {
-        connect_passwords(filename_passwords, username, hostname, port, timeout);
+    if (!filename.empty()) {
+        connect_all(filename, hostname, port, timeout);
     } else {
-        std::cerr << "You must specify either an accounts file or a passwords file with a username." << std::endl;
+        std::cerr << "You must specify a file." << std::endl;
         std::cout << "Use --help for usage information." << std::endl;
         return 1;
     }
