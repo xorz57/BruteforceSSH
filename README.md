@@ -26,6 +26,14 @@ Ensure you have Docker and Docker Compose installed on your machine.
 - **Username**: `pi`
 - **Password**: `raspberry`
 
+```ps1
+PS C:\Users\xorz57\Desktop\BruteforceSSH\build> .\BruteforceSSH.exe -h localhost -f .\assets\accounts.txt -p 2222
+Failure: pi:root
+Failure: pi:toor
+Failure: pi:1234
+Success: pi:raspberry
+```
+
 ## Dependencies
 
 BruteforceSSH relies on the following libraries:
