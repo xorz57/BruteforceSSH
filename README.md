@@ -17,16 +17,16 @@ Options:
 
 ## Examples
 
-```powershell
-PS C:\BruteforceSSH\build> .\BruteforceSSH.exe --file .\assets\accounts.txt --host localhost --port 2222
+```console
+./BruteforceSSH --file accounts.txt --host localhost --port 2222
 Failure: pi:root
 Failure: pi:toor
 Failure: pi:1234
 Success: pi:raspberry
 ```
 
-```powershell
-PS C:\BruteforceSSH\build> .\BruteforceSSH.exe --file .\assets\passwords.txt --host localhost --port 2222 --user pi
+```console
+./BruteforceSSH --file passwords.txt --host localhost --port 2222 --user pi
 Failure: pi:root
 Failure: pi:toor
 Failure: pi:1234
