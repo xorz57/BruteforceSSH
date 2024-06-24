@@ -2,6 +2,29 @@
 
 [![Build](https://github.com/xorz57/BruteforceSSH/actions/workflows/Build.yml/badge.svg)](https://github.com/xorz57/BruteforceSSH/actions/workflows/Build.yml)
 
+## Usage
+
+```ps1
+PS C:\Users\xorz57\Desktop\BruteforceSSH\build> .\BruteforceSSH.exe --help
+Usage: BruteforceSSH [options]
+Options:
+  -f, --file <filename>      File
+  -h, --host <hostname>      Host (default: 127.0.0.1)
+  -p, --port <port>          Port (default: 22)
+  -t, --timeout <timeout>    Timeout (seconds, default: 30)
+  --help                     Print help
+```
+
+## Example
+
+```ps1
+PS C:\Users\xorz57\Desktop\BruteforceSSH\build> .\BruteforceSSH.exe -h localhost -f .\assets\accounts.txt -p 2222
+Failure: pi:root
+Failure: pi:toor
+Failure: pi:1234
+Success: pi:raspberry
+```
+
 ## Testing
 
 Ensure you have Docker and Docker Compose installed on your machine.
@@ -25,29 +48,6 @@ Ensure you have Docker and Docker Compose installed on your machine.
 
 - **Username**: `pi`
 - **Password**: `raspberry`
-
-## Usage
-
-```ps1
-PS C:\Users\xorz57\Desktop\BruteforceSSH\build> .\BruteforceSSH.exe --help
-Usage: BruteforceSSH [options]
-Options:
-  -f, --file <filename>      File
-  -h, --host <hostname>      Host (default: 127.0.0.1)
-  -p, --port <port>          Port (default: 22)
-  -t, --timeout <timeout>    Timeout (seconds, default: 30)
-  --help                     Print help
-```
-
-## Example
-
-```ps1
-PS C:\Users\xorz57\Desktop\BruteforceSSH\build> .\BruteforceSSH.exe -h localhost -f .\assets\accounts.txt -p 2222
-Failure: pi:root
-Failure: pi:toor
-Failure: pi:1234
-Success: pi:raspberry
-```
 
 ## Dependencies
 
