@@ -2,6 +2,18 @@
 
 [![Build](https://github.com/xorz57/BruteforceSSH/actions/workflows/Build.yml/badge.svg)](https://github.com/xorz57/BruteforceSSH/actions/workflows/Build.yml)
 
+## Usage
+
+```console
+Usage: BruteforceSSH [options]
+Options:
+  -f, --file <filename>      File
+  -h, --host <hostname>      Host (default: 127.0.0.1)
+  -p, --port <port>          Port (default: 22)
+  -t, --timeout <timeout>    Timeout (seconds, default: 30)
+  --help                     Print help
+```
+
 ## Testing
 
 Ensure you have Docker and Docker Compose installed on your machine.
