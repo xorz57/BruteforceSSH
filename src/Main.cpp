@@ -39,7 +39,7 @@ bool connect(const std::string &hostname, int port, const std::string &username,
     }
 }
 
-bool connect_all(const std::string &filename, const std::string &hostname, int port, int timeout) {
+bool connect_accounts(const std::string &filename, const std::string &hostname, int port, int timeout) {
     std::ifstream file(filename);
     std::string line;
 
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (!filename.empty()) {
-        if (!connect_all(filename, hostname, port, timeout)) {
+        if (!connect_accounts(filename, hostname, port, timeout)) {
             std::cerr << "No successful authentication found." << std::endl;
             return 1;
         }
