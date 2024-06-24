@@ -8,10 +8,29 @@
 Usage: BruteforceSSH [options]
 Options:
   -f, --file <filename>      File
+  -u, --user <username>      User (optional)
   -h, --host <hostname>      Host (default: 127.0.0.1)
   -p, --port <port>          Port (default: 22)
   -t, --timeout <timeout>    Timeout (seconds, default: 30)
   --help                     Print help
+```
+
+## Examples
+
+```console
+./BruteforceSSH --file accounts.txt --host localhost --port 2222
+Failure: pi:root
+Failure: pi:toor
+Failure: pi:1234
+Success: pi:raspberry
+```
+
+```console
+./BruteforceSSH --file passwords.txt --host localhost --port 2222 --user pi
+Failure: pi:root
+Failure: pi:toor
+Failure: pi:1234
+Success: pi:raspberry
 ```
 
 ## Testing
