@@ -14,11 +14,9 @@ else()
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif()
 
-find_package(cxxopts REQUIRED)
 find_package(libssh REQUIRED)
 
 add_executable(BruteforceSSH src/Main.cpp)
-target_link_libraries(BruteforceSSH PRIVATE cxxopts::cxxopts)
 target_link_libraries(BruteforceSSH PRIVATE ssh)
 
 add_custom_target(BruteforceSSHAssets COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets)

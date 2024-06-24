@@ -2,7 +2,6 @@
     "name": "bruteforce-ssh",
     "version-string": "0.1.0",
     "dependencies": [
-        "cxxopts",
         "libssh"
     ]
 }

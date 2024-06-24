@@ -1,5 +1,3 @@
-#include <cxxopts.hpp>
-
 #include <libssh/libssh.h>
 
 #include <fstream>
@@ -85,45 +83,81 @@ bool SSHConnectPasswords(const std::string &filename, const std::string &usernam
 }
 
 int main(int argc, char *argv[]) {
-    try {
-        cxxopts::Options options("BruteforceSSH");
+    std::string filename_accounts;
+    std::string filename_passwords;
+    std::string username;
+    std::string hostname = "127.0.0.1";
+    int port = 22;
+    int timeout = 30;
 
-        // clang-format off
-        options.add_options()
-            ("a,accounts", "Accounts file", cxxopts::value<std::string>())
-            ("p,passwords", "Passwords file", cxxopts::value<std::string>())
-            ("u,username", "Username", cxxopts::value<std::string>())
-            ("h,hostname", "Hostname", cxxopts::value<std::string>()->default_value("127.0.0.1"))
-            ("P,port", "Port", cxxopts::value<int>()->default_value("22"))
-            ("t,timeout", "Timeout (seconds)", cxxopts::value<int>()->default_value("30"))
-            ("help", "Print help");
-        // clang-format on
-
-        auto result = options.parse(argc, argv);
-
-        if (result.count("help")) {
-            std::cout << options.help() << std::endl;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-a" || arg == "--accounts") {
+            if (i + 1 < argc) {
+                filename_accounts = argv[++i];
+            } else {
+                std::cerr << "--accounts option requires a filename argument." << std::endl;
+                return 1;
+            }
+        } else if (arg == "-p" || arg == "--passwords") {
+            if (i + 1 < argc) {
+                filename_passwords = argv[++i];
+            } else {
+                std::cerr << "--passwords option requires a filename argument." << std::endl;
+                return 1;
+            }
+        } else if (arg == "-u" || arg == "--username") {
+            if (i + 1 < argc) {
+                username = argv[++i];
+            } else {
+                std::cerr << "--username option requires a username argument." << std::endl;
+                return 1;
+            }
+        } else if (arg == "-h" || arg == "--hostname") {
+            if (i + 1 < argc) {
+                hostname = argv[++i];
+            } else {
+                std::cerr << "--hostname option requires a hostname argument." << std::endl;
+                return 1;
+            }
+        } else if (arg == "-P" || arg == "--port") {
+            if (i + 1 < argc) {
+                port = std::stoi(argv[++i]);
+            } else {
+                std::cerr << "--port option requires a port number argument." << std::endl;
+                return 1;
+            }
+        } else if (arg == "-t" || arg == "--timeout") {
+            if (i + 1 < argc) {
+                timeout = std::stoi(argv[++i]);
+            } else {
+                std::cerr << "--timeout option requires a timeout value (seconds) argument." << std::endl;
+                return 1;
+            }
+        } else if (arg == "--help" || arg == "-help" || arg == "-h") {
+            std::cout << "Usage: BruteforceSSH [options]" << std::endl;
+            std::cout << "Options:" << std::endl;
+            std::cout << "  -a, --accounts <filename>  Accounts file" << std::endl;
+            std::cout << "  -p, --passwords <filename> Passwords file" << std::endl;
+            std::cout << "  -u, --username <username>   Username" << std::endl;
+            std::cout << "  -h, --hostname <hostname>   Hostname (default: 127.0.0.1)" << std::endl;
+            std::cout << "  -P, --port <port>           Port (default: 22)" << std::endl;
+            std::cout << "  -t, --timeout <timeout>     Timeout (seconds, default: 30)" << std::endl;
+            std::cout << "  --help                      Print help" << std::endl;
             return 0;
-        }
-
-        std::string hostname = result["hostname"].as<std::string>();
-        int port = result["port"].as<int>();
-        int timeout = result["timeout"].as<int>();
-
-        if (result.count("accounts")) {
-            std::string filename = result["accounts"].as<std::string>();
-            SSHConnectAccounts(filename, hostname, port, timeout);
-        } else if (result.count("passwords") && result.count("username")) {
-            std::string filename = result["passwords"].as<std::string>();
-            std::string username = result["username"].as<std::string>();
-            SSHConnectPasswords(filename, username, hostname, port, timeout);
         } else {
-            std::cerr << "You must specify either an accounts file or a passwords file with a username." << std::endl;
-            std::cout << options.help() << std::endl;
+            std::cerr << "Unknown option: " << arg << std::endl;
             return 1;
         }
-    } catch (const cxxopts::exceptions::exception &e) {
-        std::cerr << "Error parsing options: " << e.what() << std::endl;
+    }
+
+    if (!filename_accounts.empty()) {
+        SSHConnectAccounts(filename_accounts, hostname, port, timeout);
+    } else if (!filename_passwords.empty() && !username.empty()) {
+        SSHConnectPasswords(filename_passwords, username, hostname, port, timeout);
+    } else {
+        std::cerr << "You must specify either an accounts file or a passwords file with a username." << std::endl;
+        std::cout << "Use --help for usage information." << std::endl;
         return 1;
     }
 
